@@ -22,7 +22,28 @@ const getUserById = function (fastify:any) {
                             playTime: { type: "object",additionalProperties: true  },
                         }
                     }
-                }
+                },
+                400: {
+                    type: "object",
+                    properties: {
+                      error: { type: "string" }
+                    },
+                    required: ["error"]
+                  },
+                404: {
+                    type: "object",
+                    properties: {
+                      error: { type: "string" }
+                    },
+                    required: ["error"]
+                  },
+                  500: {
+                    type: "object",
+                    properties: {
+                      error: { type: "string" }
+                    },
+                    required: ["error"]
+                  }
             }
         }
     }, async (request: any, reply: any) => {
