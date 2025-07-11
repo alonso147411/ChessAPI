@@ -48,7 +48,7 @@ const getUserById = function (fastify:any) {
         }
     }, async (request: any, reply: any) => {
         try {
-            const { id } = request.query;
+            const { id } = request.query as {id?:string};
 
             if (!id) {
                 return reply

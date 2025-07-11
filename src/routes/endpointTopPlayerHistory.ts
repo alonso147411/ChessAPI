@@ -47,7 +47,7 @@ const getTopPlayerHistory = function( fastify: any ){
         
     }, async (request: any, reply: any) => {
         try {
-            const { mode , top} = request.query;
+            const { mode , top} = request.query as {mode?:string, top?:number};
             if (!mode || !top) {
                 return reply
                 .status(400)

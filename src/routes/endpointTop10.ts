@@ -35,7 +35,7 @@ const getTop10 = function(fastify:any){
                       }
             }
         }
-    },async (request:any, reply:any) => {
+    },async ( reply:any) => {
         try {
             const response = await axios.get('https://lichess.org/api/player');
             if (!response.data || Object.keys(response.data).length === 0) {

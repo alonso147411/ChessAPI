@@ -41,7 +41,7 @@ const getEnrichedUser = function (fastify: any) {
         }
     } ,async (request: any, reply: any) => { 
         try {
-            const { id, mode } = request.query;
+            const { id, mode } = request.query as {id?:string,mode?:string};
             if (!id || !mode) {
                 return reply
                     .status(400)
