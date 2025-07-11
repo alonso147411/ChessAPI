@@ -45,7 +45,6 @@ const getUserById = function (fastify:any) {
                     }
                 }
             );
-            console.dir(response.data, { depth: null });
             if (Array.isArray(response.data)) {
                 const mapped = response.data.map((user: any) => {
                     const { perfs, ...rest } = user;
