@@ -1,6 +1,5 @@
 import axios, { get } from 'axios';
-import getUserById from './endpointUserById';
-import { profile } from 'console';
+
 
 const getEnrichedUser = function (fastify: any) {
     fastify.get('/chess/user/enriched', {
@@ -29,7 +28,7 @@ const getEnrichedUser = function (fastify: any) {
             }
 
             const userResponse = await axios.get(`https://lichess.org/api/user/${id}`);
-            const user = userResponse.data as any;;
+            const user = userResponse.data as any;
             const performanceResponse = await axios.get(`https://lichess.org/api/user/${id}/perf/${mode}`);
             const perf = performanceResponse.data as any;
 
