@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { profile } from 'console';
 
 const getUserById = function (fastify:any) {
     fastify.get('/chess/user', {
