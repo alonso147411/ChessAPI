@@ -1,5 +1,6 @@
 import { userByIdSchema } from '../utils/schemas';
 import { userByIdEndpointCall } from '../utils/lichessApiCalls';
+import { sendError400, sendError404, sendError500 } from '../utils/errors';
 
 const getUserById = function (fastify:any) {
     fastify.get('/chess/user',userByIdSchema, async (request: any, reply: any) => {
@@ -7,9 +8,8 @@ const getUserById = function (fastify:any) {
             const { id } = request.query as {id?:string};
 
             if (!id) {
-                return reply
-                    .status(400)
-                    .send({ error: 'Invalid or missing id parameter' });
+                sendError400(reply);
+                return;
             }
 
             const response = await userByIdEndpointCall(id);
@@ -23,20 +23,16 @@ const getUserById = function (fastify:any) {
                 });
                 reply.send(mapped);
             } else {
-                reply.status(404).send({ error: 'User(s) not found' });
+                sendError400(reply);
             }
         } catch (error:any) {
             if (error.response && error.response.status === 404) {
-                return reply
-                    .status(404)
-                    .send({ error: 'User not found' });
+                sendError404(reply);
             }
             if (error.response && error.response.status === 400) {
-                return reply
-                    .status(400)
-                    .send({ error: 'Invalid or missing id parameter' });
+                sendError400(reply);
             }
-            reply.status(500).send({ error: 'Internal server error' });
+            sendError500(reply);
         }
     });
 }

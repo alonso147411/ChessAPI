@@ -1,5 +1,6 @@
 import { enrichedUserSchema } from '../utils/schemas';
 import { performanceStatisticsEndpointCall, userByIdEndpointCall } from '../utils/lichessApiCalls';
+import { sendError400, sendError404, sendError500 } from '../utils/errors';
 
 
 const getEnrichedUser = function (fastify: any) {
@@ -7,9 +8,7 @@ const getEnrichedUser = function (fastify: any) {
         try {
             const { id, mode } = request.query as {id?:string,mode?:string};
             if (!id || !mode) {
-                return reply
-                    .status(400)
-                    .send({ error: 'Invalid or missing id or mode parameter' });
+                sendError400(reply);
             }
 
             const userResponse = await userByIdEndpointCall(id);
@@ -31,16 +30,12 @@ const getEnrichedUser = function (fastify: any) {
 
         } catch (error: any) {
             if (error.response && error.response.status === 404) {
-                return reply
-                    .status(404)
-                    .send({ error: 'User or mode not found' });
+                sendError404(reply);
             }
             if (error.response && error.response.status === 400) {
-                return reply
-                    .status(400)
-                    .send({ error: 'Invalid or missing id or mode parameter' });
+                sendError400(reply);
             }
-            reply.status(500).send({ error: 'Internal server error' });
+            sendError500(reply);
         }
 
     })

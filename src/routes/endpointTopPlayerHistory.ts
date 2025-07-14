@@ -1,14 +1,14 @@
 import { topPlayerHistorySchema } from '../utils/schemas';
 import { ratingUserHistoryEndpointCall, top200PlayerEndpointCall } from '../utils/lichessApiCalls';
+import { sendError400, sendError404, sendError500 } from '../utils/errors';
 
 const getTopPlayerHistory = function( fastify: any ){
     fastify.get('/chess/topPlayerHistory',topPlayerHistorySchema , async (request: any, reply: any) => {
         try {
             const { mode , top} = request.query as {mode?:string, top?:number};
             if (!mode || !top) {
-                return reply
-                .status(400)
-                .send({ error: 'Invalid or missing top or mode parameter' });
+                sendError400(reply);
+                return;
             }
 
             const topResponse = await top200PlayerEndpointCall(mode);
@@ -17,7 +17,7 @@ const getTopPlayerHistory = function( fastify: any ){
             const players = usersData.users ?? [];
             
             if (!Array.isArray(players) || players.length < top) {
-                return reply.status(404).send({ error: "Player not found." });
+                sendError404(reply);
             }
             const player = players[top - 1];
            
@@ -28,7 +28,7 @@ const getTopPlayerHistory = function( fastify: any ){
             const modeHistory = Array.isArray(history) ? history.find((h: any) => h.name.toLowerCase() === mode.toLowerCase()) : null;
 
             if (!modeHistory || !Array.isArray(modeHistory.points)) {
-                return reply.status(404).send({ error: "Game Mode not found." });
+                sendError404(reply);
             }
 
             const historyFormated = modeHistory.points.map((point: any) => ({
@@ -45,16 +45,12 @@ const getTopPlayerHistory = function( fastify: any ){
             
         } catch (error:any) {
             if (error.response && error.response.status === 404) {
-                return reply
-                    .status(404)
-                    .send({ error: 'Game mode not found' });
+                sendError404(reply);
             }
             if (error.response && error.response.status === 400) {
-                return reply
-                    .status(400)
-                    .send({ error: 'Invalid or missing top or mode parameter' });
+                sendError400(reply);
             }
-            reply.status(500).send({ error: 'Internal server error' });
+            sendError500(reply);
         }
     })
 }
