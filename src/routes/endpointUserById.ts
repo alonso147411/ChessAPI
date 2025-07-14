@@ -8,7 +8,7 @@ const getUserById = function (fastify:any) {
             const { id } = request.query as {id?:string};
 
             if (!id) {
-                sendError400(reply);
+                sendError400(reply,"Invalid or missing 'id' parameter.");
                 return;
             }
 
@@ -23,16 +23,20 @@ const getUserById = function (fastify:any) {
                 });
                 reply.send(mapped);
             } else {
-                sendError400(reply);
+                sendError400(reply,"Invalid or missing 'id' parameter.");
+                return;
             }
         } catch (error:any) {
             if (error.response && error.response.status === 404) {
-                sendError404(reply);
+                sendError404(reply,"User not found");
+                return;
             }
             if (error.response && error.response.status === 400) {
-                sendError400(reply);
+                sendError400(reply,"Invalid or missing 'id' parameter.");
+                return;
             }
             sendError500(reply);
+            return;
         }
     });
 }

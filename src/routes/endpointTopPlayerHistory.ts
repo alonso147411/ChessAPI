@@ -7,7 +7,7 @@ const getTopPlayerHistory = function( fastify: any ){
         try {
             const { mode , top} = request.query as {mode?:string, top?:number};
             if (!mode || !top) {
-                sendError400(reply);
+                sendError400(reply,"Invalid or missing 'top' or 'mode' parameter.");
                 return;
             }
 
@@ -17,7 +17,8 @@ const getTopPlayerHistory = function( fastify: any ){
             const players = usersData.users ?? [];
             
             if (!Array.isArray(players) || players.length < top) {
-                sendError404(reply);
+                sendError400(reply,"Invalid or missing player parameter.");
+                return;
             }
             const player = players[top - 1];
            
@@ -28,7 +29,8 @@ const getTopPlayerHistory = function( fastify: any ){
             const modeHistory = Array.isArray(history) ? history.find((h: any) => h.name.toLowerCase() === mode.toLowerCase()) : null;
 
             if (!modeHistory || !Array.isArray(modeHistory.points)) {
-                sendError404(reply);
+                sendError404(reply,"Game Mode not found.");
+                return;
             }
 
             const historyFormated = modeHistory.points.map((point: any) => ({
@@ -45,12 +47,15 @@ const getTopPlayerHistory = function( fastify: any ){
             
         } catch (error:any) {
             if (error.response && error.response.status === 404) {
-                sendError404(reply);
+                sendError404(reply,"Game Mode not found.");
+                return;
             }
             if (error.response && error.response.status === 400) {
-                sendError400(reply);
+                sendError400(reply,"Invalid or missing 'top' or 'mode' parameter.");
+                return;
             }
             sendError500(reply);
+            return;
         }
     })
 }

@@ -36,11 +36,11 @@ export const top10schema = {
               username: { type: "string" },
               perfs: { type: "object", additionalProperties: true },
             },
-            required: ["id", "username", "perfs"],
-          },
-        },
+            required: ["id", "username", "perfs"]
+          }
+        }
       },
-      errorSchemaValidation,
+      errorSchemaValidation
     },
   },
 };

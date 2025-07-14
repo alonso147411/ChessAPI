@@ -7,13 +7,15 @@ const getTop10 = function(fastify:any){
         try {
             const response = await top10EndpointCall();
             if (!response.data || Object.keys(response.data).length === 0) {
-                sendError404(reply);
+                sendError404(reply,"Not data found");
+                return;
             }
 
             reply.send(response.data);
 
         } catch (error) {
             sendError500(reply);
+            return;
         }
     });
     
