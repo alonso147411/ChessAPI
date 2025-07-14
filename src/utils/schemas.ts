@@ -40,9 +40,9 @@ export const top10schema = {
           }
         }
       },
-      errorSchemaValidation
-    },
-  },
+      ...errorSchemaValidation,
+    }
+  }
 };
 
 export const enrichedUserSchema = {
@@ -57,11 +57,11 @@ export const enrichedUserSchema = {
           playTime: { type: "object", additionalProperties: true },
           rank: { type: "number" },
           resultStreak: { type: "object", additionalProperties: true },
-        },
+        }
       },
-      errorSchemaValidation,
-    },
-  },
+      ...errorSchemaValidation,
+    }
+  }
 };
 
 export const topPlayerHistorySchema = {
@@ -79,14 +79,14 @@ export const topPlayerHistorySchema = {
               properties: {
                 date: { type: "string" },
                 rating: { type: "number" },
-              },
-            },
-          },
-        },
+              }
+            }
+          }
+        }
       },
-      errorSchemaValidation,
-    },
-  },
+      ...errorSchemaValidation,
+    }
+  }
 };
 
 export const userByIdSchema = {
@@ -108,10 +108,10 @@ export const userByIdSchema = {
             profile: { type: "object", additionalProperties: true },
             seenAt: { type: "number" },
             playTime: { type: "object", additionalProperties: true },
-          },
-        },
+          }
+        }
       },
-      errorSchemaValidation,
-    },
-  },
+      ...errorSchemaValidation,
+    }
+  }
 };

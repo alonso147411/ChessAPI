@@ -15,7 +15,6 @@ const getTop10 = function(fastify:any){
 
         } catch (error) {
             sendError500(reply);
-            return;
         }
     });
     

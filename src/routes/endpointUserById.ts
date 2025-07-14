@@ -29,14 +29,14 @@ const getUserById = function (fastify:any) {
         } catch (error:any) {
             if (error.response && error.response.status === 404) {
                 sendError404(reply,"User not found");
-                return;
+                
             }
             if (error.response && error.response.status === 400) {
                 sendError400(reply,"Invalid or missing 'id' parameter.");
-                return;
+               
             }
             sendError500(reply);
-            return;
+           
         }
     });
 }

@@ -32,14 +32,12 @@ const getEnrichedUser = function (fastify: any) {
         } catch (error: any) {
             if (error.response && error.response.status === 404) {
                 sendError404(reply,"User or Game Mode not found.");
-                return;
             }
             if (error.response && error.response.status === 400) {
                 sendError400(reply,"Invalid or missing 'id' or 'mode' parameter.");
-                return;
             }
             sendError500(reply);
-            return;
+           
         }
 
     })
