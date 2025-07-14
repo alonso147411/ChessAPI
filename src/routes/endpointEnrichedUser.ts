@@ -1,45 +1,9 @@
-import axios, { get } from 'axios';
+import { enrichedUserSchema } from '../utils/schemas';
+import { performanceStatisticsEndpointCall, userByIdEndpointCall } from '../utils/lichessApiCalls';
 
 
 const getEnrichedUser = function (fastify: any) {
-    fastify.get('/chess/user/enriched', {
-        schema: {
-            response: {
-                200: {
-                    type: "object",
-                        properties: {
-                            id: {type: "string" },
-                            username: {type: "string" },
-                            profile: { type: "object",additionalProperties: true  },
-                            playTime: { type: "object",additionalProperties: true  },
-                            rank: {type:"number"},
-                            resultStreak: {type: "object",additionalProperties: true},
-                        }
-                },
-                400: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  },
-                404: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  },
-                  500: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  }
-            }
-        }
-    } ,async (request: any, reply: any) => { 
+    fastify.get('/chess/user/enriched', enrichedUserSchema ,async (request: any, reply: any) => { 
         try {
             const { id, mode } = request.query as {id?:string,mode?:string};
             if (!id || !mode) {
@@ -48,9 +12,10 @@ const getEnrichedUser = function (fastify: any) {
                     .send({ error: 'Invalid or missing id or mode parameter' });
             }
 
-            const userResponse = await axios.get(`https://lichess.org/api/user/${id}`);
-            const user = userResponse.data as any;
-            const performanceResponse = await axios.get(`https://lichess.org/api/user/${id}/perf/${mode}`);
+            const userResponse = await userByIdEndpointCall(id);
+            const users = userResponse.data as any[];
+            const user = Array.isArray(users) && users.length > 0 ? users[0] : null;
+            const performanceResponse = await performanceStatisticsEndpointCall(id,mode);
             const perf = performanceResponse.data as any;
 
             const out = {

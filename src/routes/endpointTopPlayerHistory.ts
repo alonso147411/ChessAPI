@@ -1,51 +1,8 @@
-import axios, { get } from 'axios';
+import { topPlayerHistorySchema } from '../utils/schemas';
+import { ratingUserHistoryEndpointCall, top200PlayerEndpointCall } from '../utils/lichessApiCalls';
 
 const getTopPlayerHistory = function( fastify: any ){
-    fastify.get('/chess/topPlayerHistory', {
-        schema: {
-            response: {
-                200: {
-                    type: "object",
-                    
-                    properties: {
-                        username: { type: "string" },
-                        history: {
-                            type: "array",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    date: { type: "string" },
-                                    rating: { type: "number" }
-                                }
-                            }
-                        }
-                    }
-                },
-                400: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  },
-                404: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  },
-                  500: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  }
-            }
-        }
-        
-    }, async (request: any, reply: any) => {
+    fastify.get('/chess/topPlayerHistory',topPlayerHistorySchema , async (request: any, reply: any) => {
         try {
             const { mode , top} = request.query as {mode?:string, top?:number};
             if (!mode || !top) {
@@ -54,7 +11,7 @@ const getTopPlayerHistory = function( fastify: any ){
                 .send({ error: 'Invalid or missing top or mode parameter' });
             }
 
-            const topResponse = await axios.get(`https://lichess.org/api/player/top/200/${mode}`);
+            const topResponse = await top200PlayerEndpointCall(mode);
 
             const usersData = topResponse.data as { users?: any[] };
             const players = usersData.users ?? [];
@@ -64,7 +21,7 @@ const getTopPlayerHistory = function( fastify: any ){
             }
             const player = players[top - 1];
            
-            const historyResponse = await axios.get(`https://lichess.org/api/user/${player.username}/rating-history`);
+            const historyResponse = await ratingUserHistoryEndpointCall(player.username);
             const history = historyResponse.data as any;
             
 

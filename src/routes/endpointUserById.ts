@@ -1,52 +1,8 @@
-import axios from 'axios';
+import { userByIdSchema } from '../utils/schemas';
+import { userByIdEndpointCall } from '../utils/lichessApiCalls';
 
 const getUserById = function (fastify:any) {
-    fastify.get('/chess/user', {
-        schema: {
-            response: {
-                200: {
-                    type: "array",
-                    items: {
-                        type: "object",
-                        required: ["id", "username", "modes"],
-                        properties: {
-                            id: { type: "string" },
-                            username: { type: "string" },
-                            modes: { type: "object" ,additionalProperties: true },
-                            flair: { type: "string" },
-                            patron: { type: "boolean" },
-                            verified: { type: "boolean" },
-                            createdAt: { type: "number" },
-                            profile: { type: "object",additionalProperties: true  },
-                            seenAt: { type: "number" },
-                            playTime: { type: "object",additionalProperties: true  },
-                        }
-                    }
-                },
-                400: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  },
-                404: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  },
-                  500: {
-                    type: "object",
-                    properties: {
-                      error: { type: "string" }
-                    },
-                    required: ["error"]
-                  }
-            }
-        }
-    }, async (request: any, reply: any) => {
+    fastify.get('/chess/user',userByIdSchema, async (request: any, reply: any) => {
         try {
             const { id } = request.query as {id?:string};
 
@@ -56,15 +12,7 @@ const getUserById = function (fastify:any) {
                     .send({ error: 'Invalid or missing id parameter' });
             }
 
-            const response = await axios.post(
-                'https://lichess.org/api/users',
-                id,
-                {
-                    headers: {
-                        "Content-Type": "text/plain",
-                    }
-                }
-            );
+            const response = await userByIdEndpointCall(id);
             if (Array.isArray(response.data)) {
                 const mapped = response.data.map((user: any) => {
                     const { perfs, ...rest } = user;
